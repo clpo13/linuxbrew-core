@@ -22,7 +22,13 @@ class Graphviz < Formula
   depends_on "libpng"
   depends_on "libtool"
   depends_on "pango"
-  depends_on "byacc" => :build unless OS.mac?
+
+  unless OS.mac?
+    depends_on "byacc" => :build
+    depends_on "gdk-pixbuf" => :build
+    depends_on "ghostscript" => :build
+    depends_on "librsvg" => :build
+  end
 
   uses_from_macos "flex" => :build
 
