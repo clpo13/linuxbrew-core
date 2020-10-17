@@ -10,6 +10,7 @@ class Openjdk < Formula
     sha256 "d44db8c5b212a36d73f1102468106124e5f5e2f20600768a9d8cecc172df4601" => :catalina
     sha256 "4549644dc93f35362c65fe12543bd77d580944673d836f71108f4bcaabf7c206" => :mojave
     sha256 "b72286cb7187fa0682761f70ea5e6f6922667ceac4de4ac3ebd855786358c773" => :high_sierra
+    sha256 "20beecb201458d8a09a303826afed846358b189578e7afaab9f602de22ffb1d9" => :x86_64_linux
   end
 
   keg_only "it shadows the macOS `java` wrapper"
@@ -19,15 +20,17 @@ class Openjdk < Formula
   unless OS.mac?
     depends_on "cups"
     depends_on "fontconfig"
-    depends_on "unzip"
-    depends_on "zip"
     depends_on "libx11"
     depends_on "libxext"
     depends_on "libxrandr"
     depends_on "libxrender"
     depends_on "libxt"
     depends_on "libxtst"
+    depends_on "unzip"
+    depends_on "zip"
   end
+
+  ignore_missing_libraries "libjvm.so" if OS.linux?
 
   on_linux do
     depends_on "pkg-config" => :build
@@ -68,10 +71,9 @@ class Openjdk < Formula
                           ("--with-x=#{HOMEBREW_PREFIX}" unless OS.mac?),
                           ("--with-cups=#{HOMEBREW_PREFIX}" unless OS.mac?),
                           ("--with-fontconfig=#{HOMEBREW_PREFIX}" unless OS.mac?),
-                          ("--build=x86_64-unknown-linux-gnu" unless OS.mac?)
+                          ("--build=x86_64-unknown-linux-gnu" unless OS.mac?) # fixes build on WSL
 
-    ENV["MAKEFLAGS"] = "JOBS=#{ENV.make_jobs}"
-    system "make", "images"
+    ENV.deparallelize { system "make", "images" }
 
     if OS.mac?
       jdk = Dir["build/*/images/jdk-bundle/*"].first
