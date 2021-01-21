@@ -25,6 +25,7 @@ class Vice < Formula
   depends_on "texinfo" => :build
   depends_on "xa" => :build
   depends_on "yasm" => :build
+  depends_on "libpcap" => :build unless OS.mac?
 
   depends_on "adwaita-icon-theme"
   depends_on "ffmpeg"
