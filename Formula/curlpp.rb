@@ -19,7 +19,7 @@ class Curlpp < Formula
     ENV.cxx11
     system "cmake", ".", *std_cmake_args
     system "make", "install"
-    inreplace bin/"curlpp-config", "#{HOMEBREW_LIBRARY}/Homebrew/shims/mac/super/clang", "/usr/bin/clang"
+    inreplace bin/"curlpp-config", "#{HOMEBREW_LIBRARY}/Homebrew/shims/mac/super/clang", "/usr/bin/clang" if OS.mac?
   end
 
   test do
